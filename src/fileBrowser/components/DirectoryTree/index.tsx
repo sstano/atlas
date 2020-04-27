@@ -16,11 +16,12 @@ const createItemClickHandler = (
 ) => () => callback(id);
 
 const renderTreeNode = (
+  files: Record<string, DirectoryItem>,
   node: DirectoryItem,
   onFileClicked: (fileId: string) => void,
   onFolderClicked: (folderId: string) => void
 ) => {
-  const { id, type, name, content } = node;
+  const { id, type, name, childrenIDs } = node;
 
   return type === DirectoryItemType.FILE ? (
     <Menu.Item key={id}>{name}</Menu.Item>
@@ -30,8 +31,8 @@ const renderTreeNode = (
       title={name}
       onTitleClick={createItemClickHandler(id, onFolderClicked)}
     >
-      {(content || []).map(
-        renderTreeNode.bind(null, node, onFileClicked, onFolderClicked)
+      {(childrenIDs || []).map((childId) =>
+        renderTreeNode(files, files[childId], onFileClicked, onFolderClicked)
       )}
     </Menu.SubMenu>
   );
@@ -40,19 +41,25 @@ const renderTreeNode = (
 const renderTree = (
   onFileOpened: (fileId: string) => void,
   onFolderOpened: (folderId: string) => void,
-  tree: Array<DirectoryItem>
+  files: Record<string, DirectoryItem>
 ) => (
   <div className={styles.fileTree}>
     <Menu onSelect={({ key }) => onFileOpened(key)}>
-      {tree.map((node) => renderTreeNode(node, onFileOpened, onFolderOpened))}
+      {files.root?.childrenIDs?.map((id) =>
+        renderTreeNode(files, files[id], onFileOpened, onFolderOpened)
+      )}
     </Menu>
   </div>
 );
 
 const renderContent = (props: DirectoryTreeProps) => {
   if (props.isLoading) return renderLoadingSpinner();
-  if (!props.tree) return renderNoData();
-  return renderTree(props.onFileOpened, props.onFolderOpened, props.tree);
+  if (!props.files) return renderNoData();
+  return renderTree(
+    props.onFileOpened,
+    props.onFolderOpened,
+    props.files as Record<string, DirectoryItem>
+  );
 };
 
 export type DirectoryTreeProps = {
@@ -60,7 +67,7 @@ export type DirectoryTreeProps = {
   onFileOpened: (id: string) => void;
   onFolderOpened: (id: string) => void;
   className?: string;
-  tree?: Array<DirectoryItem>;
+  files: Record<string, DirectoryItem> | null;
 };
 
 const DirectoryTree: React.FC<DirectoryTreeProps> = (props) => {

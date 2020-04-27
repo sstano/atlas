@@ -28,7 +28,7 @@ const QUERIES = {
   `,
 };
 
-const getFolderContent = async (id?: string): Promise<Array<DirectoryItem>> => {
+const getFolderContent = async (id?: string): Promise<DirectoryItem[]> => {
   const result = await client.query({
     query: QUERIES.LIST_FOLDER,
     variables: { id },

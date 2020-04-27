@@ -1,49 +1,59 @@
 import React, { useState, useEffect } from "react";
-import FileBrowser from "./FileBrowser";
 
 import apiHelper from "../api";
+
+import FileTreeContext from "./FileTreeContext";
+import FileBrowser from "./FileBrowser";
 import DirectoryItem from "../types/DirectoryItem";
-
-const onFileOpened = (fileId: string): void => {
-  // TODO
-};
-
-const onFolderOpened = (folderId: string): void => {
-  // TODO
-};
+import initializeFileMap from "./utils/initializeFileMap";
 
 const FileBrowserContainer: React.FC = () => {
-  const [fileTree, setFileTree] = useState<DirectoryItem[]>();
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [loadingError, setLoadingError] = useState();
+  const [fileMap, setFileMap] = useState<Record<string, DirectoryItem> | null>(
+    null
+  );
+  const [isLoadingInitialData, setLoading] = useState<boolean>(false);
+  const [loadingError, setLoadingError] = useState(null);
+
+  const onFileOpened = (fileId: string): void => {
+    // TODO
+  };
+
+  const onFolderOpened = (folderId: string): void => {
+    // TODO
+  };
 
   useEffect(() => {
     async function loadInitialData() {
       try {
         setLoading(true);
-        const folderContent = await apiHelper.getFolderContent();
-        setFileTree(folderContent);
+        const rootFolderContent = await apiHelper.getFolderContent();
+        setFileMap(initializeFileMap(rootFolderContent));
       } catch (error) {
         console.error(error);
         setLoadingError(error);
-        setFileTree([]);
+        setFileMap({});
       } finally {
         setLoading(false);
       }
     }
 
-    if (!fileTree && !isLoading) {
+    if (!fileMap && !isLoadingInitialData) {
       loadInitialData();
     }
-  }, [fileTree, isLoading]);
+  }, [fileMap, isLoadingInitialData]);
 
   return (
-    <FileBrowser
-      isLoadingRoot={isLoading}
-      onFileOpened={onFileOpened}
-      onFolderOpened={onFolderOpened}
-      tree={fileTree}
-    />
+    <FileTreeContext.Provider
+      value={{
+        fileMap,
+        isLoadingInitialData,
+        loadingError,
+        onFileOpened,
+        onFolderOpened,
+      }}
+    >
+      <FileBrowser />
+    </FileTreeContext.Provider>
   );
 };
 

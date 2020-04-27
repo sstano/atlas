@@ -11,6 +11,7 @@ describe("DirectoryTree component", () => {
     const wrapper = shallow(
       <DirectoryTree
         isLoading
+        files={null}
         onFolderOpened={mockHandler}
         onFileOpened={mockHandler}
       />
@@ -26,6 +27,7 @@ describe("DirectoryTree component", () => {
     const wrapper = shallow(
       <DirectoryTree
         isLoading={false}
+        files={null}
         onFolderOpened={mockHandler}
         onFileOpened={mockHandler}
       />
@@ -38,13 +40,25 @@ describe("DirectoryTree component", () => {
 
   test("should render the loaded content", () => {
     const mockHandler = () => null;
-    const mockTree: DirectoryItem[] = [
-      { id: "test1", name: "File 1", type: DirectoryItemType.FILE },
-    ];
+    const mockFiles: Record<string, DirectoryItem> = {
+      root: {
+        id: "root",
+        name: "",
+        type: DirectoryItemType.FOLDER,
+        childrenIDs: ["test1", "test2", "folder1"],
+      },
+      test1: { id: "test1", name: "File 1", type: DirectoryItemType.FILE },
+      test2: { id: "test2", name: "File 2", type: DirectoryItemType.FILE },
+      folder1: {
+        id: "folder1",
+        name: "Folder 1",
+        type: DirectoryItemType.FOLDER,
+      },
+    };
     const wrapper = shallow(
       <DirectoryTree
         isLoading={false}
-        tree={mockTree}
+        files={mockFiles}
         onFolderOpened={mockHandler}
         onFileOpened={mockHandler}
       />
@@ -52,14 +66,26 @@ describe("DirectoryTree component", () => {
 
     expect(wrapper.exists(Spin)).toEqual(false);
     expect(wrapper.exists(Menu)).toEqual(true);
+    expect(wrapper.find(Menu.Item).length).toEqual(2);
+    expect(wrapper.find(Menu.SubMenu).length).toEqual(1);
     expect(wrapper.exists(Empty)).toEqual(false);
   });
 
   describe("selecting tree view item", () => {
-    const mockTree: DirectoryItem[] = [
-      { id: "file1", name: "File 1", type: DirectoryItemType.FILE },
-      { id: "folder1", name: "Folder 1", type: DirectoryItemType.FOLDER },
-    ];
+    const mockFiles: Record<string, DirectoryItem> = {
+      root: {
+        id: "root",
+        name: "",
+        type: DirectoryItemType.FOLDER,
+        childrenIDs: ["file1", "folder1"],
+      },
+      file1: { id: "file1", name: "File 1", type: DirectoryItemType.FILE },
+      folder1: {
+        id: "folder1",
+        name: "Folder 1",
+        type: DirectoryItemType.FOLDER,
+      },
+    };
 
     test("should handle clicking on a file", () => {
       const mockFileClickHandler = jest.fn();
@@ -68,7 +94,7 @@ describe("DirectoryTree component", () => {
       const wrapper = mount(
         <DirectoryTree
           isLoading={false}
-          tree={mockTree}
+          files={mockFiles}
           onFileOpened={mockFileClickHandler}
           onFolderOpened={mockFolderClickHandler}
         />
@@ -88,7 +114,7 @@ describe("DirectoryTree component", () => {
       const wrapper = mount(
         <DirectoryTree
           isLoading={false}
-          tree={mockTree}
+          files={mockFiles}
           onFileOpened={mockFileClickHandler}
           onFolderOpened={mockFolderClickHandler}
         />
