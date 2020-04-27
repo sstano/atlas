@@ -7,9 +7,9 @@ const client = new ApolloClient({
 });
 
 const QUERIES = {
-  LIST_FOLDER: gql`
+  listFolder: (id?: string) => gql`
     {
-      getList(id: null) {
+      getList(id: ${id ? `"${id}"` : "null"}) {
         id
         name
         type
@@ -17,9 +17,9 @@ const QUERIES = {
     }
   `,
 
-  GET_FILE: gql`
+  getFile: (id: string) => gql`
     {
-      getFile(id: null) {
+      getFile(id: "${id}") {
         id
         name
         text
@@ -30,18 +30,15 @@ const QUERIES = {
 
 const getFolderContent = async (id?: string): Promise<DirectoryItem[]> => {
   const result = await client.query({
-    query: QUERIES.LIST_FOLDER,
-    variables: { id },
+    query: QUERIES.listFolder(id),
   });
   return result.data.getList as DirectoryItem[];
 };
 
-const getFileDetails = async (id: string): Promise<File> => {
+const getFileDetails = async (id: string): Promise<File | null> => {
   const result = await client.query({
-    query: QUERIES.GET_FILE,
-    variables: { id },
+    query: QUERIES.getFile(id),
   });
-
   return result.data.getFile as File;
 };
 

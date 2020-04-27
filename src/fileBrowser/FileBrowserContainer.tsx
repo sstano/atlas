@@ -6,6 +6,7 @@ import FileTreeContext from "./FileTreeContext";
 import FileBrowser from "./FileBrowser";
 import DirectoryItem from "../types/DirectoryItem";
 import initializeFileMap from "./utils/initializeFileMap";
+import createNextFileMap from "./utils/createNextFileMap";
 
 const FileBrowserContainer: React.FC = () => {
   const [fileMap, setFileMap] = useState<Record<string, DirectoryItem> | null>(
@@ -18,8 +19,19 @@ const FileBrowserContainer: React.FC = () => {
     // TODO
   };
 
-  const onFolderOpened = (folderId: string): void => {
-    // TODO
+  const onFolderOpened = async (folderId: string): Promise<void> => {
+    try {
+      const folderContent = await apiHelper.getFolderContent(folderId);
+      const nextFileMap = createNextFileMap(
+        fileMap as Record<string, DirectoryItem>,
+        folderId,
+        folderContent
+      );
+      setFileMap(nextFileMap);
+    } catch (error) {
+      console.error(error);
+      setLoadingError(error);
+    }
   };
 
   useEffect(() => {
