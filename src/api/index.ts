@@ -3,7 +3,7 @@ import DirectoryItem from "../types/DirectoryItem";
 import File from "../types/File";
 
 const client = new ApolloClient({
-  uri: "https://react-test.atlasconsulting.cz/",
+  uri: process.env.REACT_APP_GRAPH_QL_ENDPOINT,
 });
 
 const QUERIES = {
