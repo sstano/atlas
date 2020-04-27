@@ -7,6 +7,7 @@ import FileBrowser from "./FileBrowser";
 import DirectoryItem from "../types/DirectoryItem";
 import initializeFileMap from "./utils/initializeFileMap";
 import createNextFileMap from "./utils/createNextFileMap";
+import File from "../types/File";
 
 const FileBrowserContainer: React.FC = () => {
   const [fileMap, setFileMap] = useState<Record<string, DirectoryItem> | null>(
@@ -14,9 +15,17 @@ const FileBrowserContainer: React.FC = () => {
   );
   const [isLoadingInitialData, setLoading] = useState<boolean>(false);
   const [loadingError, setLoadingError] = useState(null);
+  const [previewedFile, setPreviewedFile] = useState<File | null>(null);
 
-  const onFileOpened = (fileId: string): void => {
-    // TODO
+  const onFileOpened = async (fileId: string): Promise<void> => {
+    try {
+      const fileDetails = await apiHelper.getFileDetails(fileId);
+      setPreviewedFile(fileDetails);
+    } catch (error) {
+      setPreviewedFile(null);
+      console.error(error);
+      setLoadingError(error);
+    }
   };
 
   const onFolderOpened = async (folderId: string): Promise<void> => {
@@ -60,6 +69,7 @@ const FileBrowserContainer: React.FC = () => {
         fileMap,
         isLoadingInitialData,
         loadingError,
+        previewedFile,
         onFileOpened,
         onFolderOpened,
       }}

@@ -29,6 +29,7 @@ const QUERIES = {
 };
 
 const getFolderContent = async (id?: string): Promise<DirectoryItem[]> => {
+  console.log("[GQL] Sending 'getList' request");
   const result = await client.query({
     query: QUERIES.listFolder(id),
   });
@@ -36,6 +37,7 @@ const getFolderContent = async (id?: string): Promise<DirectoryItem[]> => {
 };
 
 const getFileDetails = async (id: string): Promise<File | null> => {
+  console.log("[GQL] Sending 'getFile' request");
   const result = await client.query({
     query: QUERIES.getFile(id),
   });

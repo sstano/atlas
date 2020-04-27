@@ -18,6 +18,7 @@ const FileBrowser: React.FC<FileBrowserProps> = () => {
             isLoadingInitialData,
             onFolderOpened,
             onFileOpened,
+            previewedFile,
           }) => (
             <>
               <DirectoryTree
@@ -28,7 +29,10 @@ const FileBrowser: React.FC<FileBrowserProps> = () => {
                 onFolderOpened={onFolderOpened}
               />
 
-              <FilePreview className={styles.filePreviewPanel} />
+              <FilePreview
+                className={styles.filePreviewPanel}
+                file={previewedFile}
+              />
             </>
           )}
         </FileTreeContext.Consumer>
