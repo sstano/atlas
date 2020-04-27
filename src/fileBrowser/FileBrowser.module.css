@@ -1,0 +1,27 @@
+.title {
+  color: #718096;
+  margin: 1em;
+}
+
+.pageWrapper {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.browserView {
+  display: flex;
+  height: 100vh;
+  flex-direction: row;
+}
+
+.directoryTreePanel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filePreviewPanel {
+  flex: 4;
+}
