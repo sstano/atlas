@@ -18,6 +18,7 @@ const FileBrowser: React.FC<FileBrowserProps> = () => {
             isLoadingInitialData,
             onFolderOpened,
             onFileOpened,
+            onClosePreview,
             previewedFile,
           }) => (
             <>
@@ -32,6 +33,7 @@ const FileBrowser: React.FC<FileBrowserProps> = () => {
               <FilePreview
                 className={styles.filePreviewPanel}
                 file={previewedFile}
+                onClosePreview={onClosePreview}
               />
             </>
           )}

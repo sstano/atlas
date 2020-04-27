@@ -43,6 +43,8 @@ const FileBrowserContainer: React.FC = () => {
     }
   };
 
+  const onClosePreview = () => setPreviewedFile(null);
+
   useEffect(() => {
     async function loadInitialData() {
       try {
@@ -72,6 +74,7 @@ const FileBrowserContainer: React.FC = () => {
         previewedFile,
         onFileOpened,
         onFolderOpened,
+        onClosePreview,
       }}
     >
       <FileBrowser />
