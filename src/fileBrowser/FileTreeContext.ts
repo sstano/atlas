@@ -8,8 +8,8 @@ export type FileTreeContextType = {
   isLoadingInitialData: boolean;
   onFileOpened: (fileId: string) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
   onFolderOpened: (folderId: string) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
-  onClosePreview: () => void;
-  previewedFile: File | null;
+  onClosePreview: (fileId: string) => void;
+  openedFiles: File[];
 };
 
 export default React.createContext({
@@ -19,5 +19,5 @@ export default React.createContext({
   onFileOpened: () => null,
   onFolderOpened: () => null,
   onClosePreview: () => null,
-  previewedFile: null,
+  openedFiles: [],
 } as FileTreeContextType);

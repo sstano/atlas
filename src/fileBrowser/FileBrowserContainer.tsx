@@ -15,14 +15,20 @@ const FileBrowserContainer: React.FC = () => {
   );
   const [isLoadingInitialData, setLoading] = useState<boolean>(false);
   const [loadingError, setLoadingError] = useState(null);
-  const [previewedFile, setPreviewedFile] = useState<File | null>(null);
+  const [openedFiles, setOpenedFiles] = useState<File[]>([]);
 
   const onFileOpened = async (fileId: string): Promise<void> => {
     try {
       const fileDetails = await apiHelper.getFileDetails(fileId);
-      setPreviewedFile(fileDetails);
+      if (!fileDetails) {
+        return;
+      }
+
+      const alreadyOpened = openedFiles.find(({ id }) => id === fileDetails.id);
+      if (fileDetails && !alreadyOpened) {
+        setOpenedFiles([...openedFiles, fileDetails]);
+      }
     } catch (error) {
-      setPreviewedFile(null);
       console.error(error);
       setLoadingError(error);
     }
@@ -43,7 +49,16 @@ const FileBrowserContainer: React.FC = () => {
     }
   };
 
-  const onClosePreview = () => setPreviewedFile(null);
+  const onClosePreview = (fileId: string): void => {
+    const file = openedFiles.find(({ id }) => id === fileId);
+    if (!file) {
+      return;
+    }
+    const idx = openedFiles.indexOf(file);
+    const nextState = [...openedFiles];
+    nextState.splice(idx, 1);
+    setOpenedFiles(nextState);
+  };
 
   useEffect(() => {
     async function loadInitialData() {
@@ -71,7 +86,7 @@ const FileBrowserContainer: React.FC = () => {
         fileMap,
         isLoadingInitialData,
         loadingError,
-        previewedFile,
+        openedFiles,
         onFileOpened,
         onFolderOpened,
         onClosePreview,
